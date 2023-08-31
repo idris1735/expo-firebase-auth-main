@@ -1,0 +1,148 @@
+const products = [
+  {
+    id: 1,
+    productName: 'Apple iPhone 12',
+    price: 799,
+    image:
+      'https://images.unsplash.com/photo-1606341518803-50c80a525f32?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OHx8QXBwbGUlMjBpUGhvbmUlMjAxMnxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
+    productOwner: 'Apple Inc.',
+  },
+  {
+    id: 2,
+    productName: 'Samsung Galaxy S21',
+    price: 699,
+    image:
+      'https://images.unsplash.com/photo-1610945264803-c22b62d2a7b3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8U2Ftc3VuZyUyMEdhbGF4eSUyMFMyMXxlbnwwfHwwfHw%3D&auto=format&fit=crop&w=500&q=60',
+    productOwner: 'Samsung Electronics',
+  },
+  {
+    id: 3,
+    productName: 'Google Pixel 5',
+    price: 699,
+    image:
+      'https://images.unsplash.com/photo-1626729053225-4ba42f6b8365?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8OXx8R29vZ2xlJTIwUGl4ZWwlMjA1fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60',
+    productOwner: 'Google LLC',
+  },
+  {
+    id: 4,
+    productName: 'Apple MacBook Pro',
+    price: 1299,
+    image:
+      'https://images.unsplash.com/file-1661973760703-91f50df21c28image?dpr=2&auto=format&fit=crop&w=416&q=60',
+    productOwner: 'Apple Inc.',
+  },
+  {
+    id: 5,
+    productName: 'Dell XPS 13',
+    price: 899,
+    image: 'https://i.imgur.com/e3Gopxpb.jpg',
+    productOwner: 'Dell Technologies',
+  },
+  {
+    id: 6,
+    productName: 'Lenovo ThinkPad X1 ',
+    price: 1299,
+    image: 'https://i.imgur.com/UTYFEn4b.jpg',
+    productOwner: 'Lenovo Group Limited',
+  },
+  {
+    id: 8,
+    productName: 'Canon EOS R5',
+    price: 3899,
+    image: 'https://i.imgur.com/aqRLsDYb.jpg',
+    productOwner: 'Canon Inc.',
+  },
+  {
+    id: 9,
+    productName: 'Nintendo Switch',
+    price: 299,
+    image: 'https://i.imgur.com/qQGgMBKb.jpg',
+    productOwner: 'Nintendo Co., Ltd.',
+  },
+  {
+    id: 10,
+    productName: 'Sony PlayStation 5',
+    price: 499,
+    image: 'https://i.imgur.com/DebpKZab.jpg',
+    productOwner: 'Sony Corporation',
+  },
+  {
+    id: 11,
+    productName: 'Microsoft Xbox Series X',
+    price: 499,
+    image: 'https://i.imgur.com/1DIF8u9b.jpg',
+    productOwner: 'Microsoft Corporation',
+  },
+  {
+    id: 12,
+    productName: 'Beats Studio3 Wireless',
+    price: 349,
+    image: 'https://i.imgur.com/85ulnuFb.jpg',
+    productOwner: 'Apple Inc.',
+  },
+  {
+    id: 13,
+    productName: 'Apple MacBook Pro',
+    price: 1499.99,
+    image: 'https://i.imgur.com/mqCoZG1b.jpg',
+    productOwner: 'Apple Inc.',
+  },
+  {
+    id: 15,
+    productName: 'Lenovo Yoga C940',
+    price: 1099.99,
+    image: 'https://i.imgur.com/i7FVUPTb.jpg',
+    productOwner: 'Lenovo Group Limited',
+  },
+  {
+    id: 16,
+    productName: 'Ms Surface Laptop 3',
+    price: 999.99,
+    image: 'https://i.imgur.com/V91m3JUb.jpg',
+    productOwner: 'Microsoft Corporation',
+  },
+  {
+    id: 17,
+    productName: 'HP Spectre x360',
+    price: 1199.99,
+    image: 'https://i.imgur.com/RTdfwnPb.jpg',
+    productOwner: 'HP Inc.',
+  },
+  {
+    id: 18,
+    productName: 'Acer Predator 300',
+    price: 1299.99,
+    image: 'https://i.imgur.com/EFg3QTnb.jpg',
+    productOwner: 'Acer Inc.',
+  },
+  {
+    id: 19,
+    productName: 'Asus ROG Zephyrus G14',
+    price: 1499.99,
+    image: 'https://i.imgur.com/tPX07iDb.jpg',
+    productOwner: 'ASUSTeK Computer Inc.',
+  },
+  {
+    id: 20,
+    productName: 'Razer Blade 15',
+    price: 1799.99,
+    image: 'https://i.imgur.com/r7UAa8Wb.jpg',
+    productOwner: 'Razer Inc.',
+  },
+  {
+    id: 21,
+    productName: 'LG Gram 17',
+    price: 1499.99,
+    image: 'https://i.imgur.com/YyzuwOQb.jpg',
+    productOwner: 'LG Corporation',
+  },
+  {
+    id: 22,
+    productName: 'Samsung Galaxy Flex',
+    price: 1299.99,
+    image: 'https://i.imgur.com/g8WwIE3b.jpg',
+    productOwner: 'Samsung',
+  },
+]
+
+export default products
