@@ -9,15 +9,17 @@ import Modal from 'react-native-modal'
 import React, { useState } from 'react'
 import colors from '../assets/colors/colors'
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons'
-import { getAuth } from 'firebase/auth'
+import { auth } from '../config/firebase'
+import { useNavigation } from '@react-navigation/native'
 
 const LogoutButton = () => {
+  const navigation = useNavigation()
   const [showModal, setShowModal] = useState(false)
-  const auth = getAuth() // initialize your useAuth hook
 
   const handleLogout = () => {
     auth.signOut() // call your logout function from useAuth hook
     setShowModal(false)
+    navigation.navigate('SignUp')
   }
 
   return (

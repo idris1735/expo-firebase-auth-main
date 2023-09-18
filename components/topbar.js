@@ -10,43 +10,52 @@ import HelpSVG from '../assets/svgs/help.svg'
 import UserName from '../data/userName'
 import { connect } from 'react-redux' // Import connect from react-redux
 import { auth } from '../config/firebase'
-import { setBalance } from '../store/balanceReducer' // Import the action to set the balance
+// import { setBalance } from '../store/balanceReducer'
+// Import the action to set the balance
 import { selectTableNumber } from '../store/tableNumberSlice'
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { doc, getDoc, getFirestore } from 'firebase/firestore'
-import { selectBalance } from '../store/balanceReducer'
+// import { selectBalance } from '../store/balanceReducer'
 const Topbar = (props) => {
   // Use the selectBalance selector to get the balance from Redux
-  const balance = useSelector(selectBalance)
+  // const balance = useSelector(selectBalance)
+  const user = useSelector((state) => state.user)
 
   const [loading, setLoading] = useState(true) // Track loading state
 
-  useEffect(() => {
-    // Check if the balance has been loaded (assuming a value of 0 means it's not loaded)
-    if (balance !== 0) {
-      setLoading(false) // Set loading to false when balance is available
-    }
-  }, [balance])
+  // useEffect(() => {
+  //   // Check if the balance has been loaded (assuming a value of 0 means it's not loaded)
+  //   if (balance !== 0) {
+  //     setLoading(false) // Set loading to false when balance is available
+  //   }
+  // }, [balance])
 
-  const logBalance = async () => {
-    console.log('====================================')
-    console.log('hello, logBalance is pressed')
-    console.log('====================================')
+  // const logBalance = async () => {
+  //   console.log('====================================')
+  //   console.log('hello, logBalance is pressed')
+  //   console.log('====================================')
+  // }
+  const logName = () => {
+    console.log(user)
   }
 
   return (
     <View style={styles.topbar}>
       <View style={styles.container}>
         {/* PROFILE BUTTON */}
-        <TouchableOpacity style={styles.profileButtonContainer}>
+        <TouchableOpacity
+          onPress={logName}
+          style={styles.profileButtonContainer}
+        >
           <Image
             style={styles.profileImg}
             source={require('../assets/profile.png')}
           />
+          <Text style={{ textAlign: 'center' }}>Name </Text>
         </TouchableOpacity>
         {/* BALANCE */}
-        <TouchableOpacity onPress={logBalance} style={styles.balanceButton}>
+        {/* <TouchableOpacity onPress={logBalance} style={styles.balanceButton}>
           <View style={styles.balcontainer}>
             <Text style={styles.balText}>
               ${loading ? 'Loading...' : balance}
@@ -59,7 +68,7 @@ const Topbar = (props) => {
             />
           </View>
           <Text style={styles.BalanceText}>Balance</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         {/* HELP BUTTON */}
         <TouchableOpacity style={styles.helpButton}>
           <HelpSVG width={40} height={40} />
@@ -70,18 +79,18 @@ const Topbar = (props) => {
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    balance: state.balance.balance, // Access the balance property from the balance reducer
-  }
-}
+// const mapStateToProps = (state) => {
+//   return {
+//     balance: state.balance.balance, // Access the balance property from the balance reducer
+//   }
+// }
 
-export default connect(mapStateToProps)(Topbar) // Connect the component to Redux
+export default Topbar // Connect the component to Redux
 
 const styles = StyleSheet.create({
   topbar: {
     // marginTop: 50,
-    height: 120,
+    height: 132,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderBottomColor: colors.green,

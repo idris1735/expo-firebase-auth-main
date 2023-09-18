@@ -7,6 +7,7 @@ import {
   FlatList,
   Image,
   RefreshControl,
+  Button,
 } from 'react-native'
 import { useSelector } from 'react-redux'
 import {
@@ -20,25 +21,35 @@ import {
 import colors from '../assets/colors/colors'
 import { selectTableNumber } from '../store/tableNumberSlice'
 import { auth } from '../config/firebase'
+import { useDispatch } from 'react-redux'
+import { fetchSalesData } from '../store/salesDataActions'
+import { selectSalesData } from '../store/salesDataReducer'
 
 const OrderBox = () => {
   const tableNumber = useSelector(selectTableNumber)
-  const orderData = useSelector((state) => state.order.orders)
-  console.log(orderData)
+  const dispatch = useDispatch()
+  const salesData = useSelector(selectSalesData)
 
-  if (!orderData || orderData.length === 0) {
-    // Handle the case where orderData is not yet defined or null
+  const logSales = () => {
+    console.log(salesData)
+  }
+
+  if (!salesData || salesData.length === 0) {
+    // Handle the case where salesData is not yet defined or empty
     return (
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text>No Order Data Found</Text>
+        <Text>No Sales Data Found</Text>
+        <View>
+          <Button onPress={logSales} title={'log the sales data'} />
+        </View>
       </ScrollView>
     )
   }
-
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={{ height: 20 }}></View>
-      {orderData
+
+      {salesData
         .slice()
         .reverse()
         .map((order, index) => (

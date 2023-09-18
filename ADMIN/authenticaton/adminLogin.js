@@ -8,19 +8,16 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import axios from 'axios'
-import colors from '../assets/colors/colors'
+import colors from '../../assets/colors/colors'
 import { useDispatch } from 'react-redux'
-import { loginSuccess } from '../store/actions'
+import { loginSuccess } from '../../store/actions'
 // import auth from '../config/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '../config/firebase'
-import { setUser } from '../store/userReducer'
-import { getDatabase, ref, get, child } from 'firebase/database'
+import { auth } from '../../config/firebase'
 
-export default function Login({ navigation }) {
+export default function AdminLogin({ navigation }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  // Dispatch the setUser action to update Redux state
   const dispatch = useDispatch()
 
   const handleLogin = async () => {
@@ -31,25 +28,10 @@ export default function Login({ navigation }) {
         password
       )
       const user = userCredential.user
-
-      // Fetch user data from Realtime Database
-      const database = getDatabase()
-      const userDataRef = ref(database, `users/${user.uid}`)
-      const userDataSnapshot = await get(child(userDataRef, 'salesData')) // Adjust the path accordingly
-
-      if (userDataSnapshot.exists()) {
-        const docData = userDataSnapshot.val() // Get the user data
-
-        dispatch(setUser(docData))
-
-        // User has successfully signed in.
-        console.log('User signed in:', user)
-        // Add your navigation logic here.
-        navigation.navigate('Splash')
-      } else {
-        console.error('User data not found.')
-        Alert.alert('Login Error', 'User data not found') // Display an alert
-      }
+      // User has successfully signed in.
+      console.log('User signed in:', user)
+      // Add your navigation logic here.
+      navigation.navigate('Splash')
     } catch (error) {
       console.error('Error signing in:', error)
       Alert.alert('Login Error', 'Invalid username or password') // Display an alert
@@ -58,7 +40,7 @@ export default function Login({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Sales Login</Text>
+      <Text style={styles.title}>Admin Login</Text>
       <TextInput
         style={styles.input}
         placeholder='Username'

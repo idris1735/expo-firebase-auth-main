@@ -202,6 +202,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 10,
+    borderTopLeftRadius: 7,
   },
   addToCartButtonText: {
     color: 'white',

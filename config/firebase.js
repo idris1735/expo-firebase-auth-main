@@ -1,20 +1,24 @@
 import { initializeApp } from 'firebase/app'
-import { getFirestore } from 'firebase/firestore'
+// import { getFirestore } from 'firebase/firestore'
 import { getAuth } from 'firebase/auth'
+import { getDatabase } from 'firebase/database'
+// import { getAnalytics } from 'firebase/analytics'
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyA18QXQ1r-fwSqExz86RWTtjeUZDo8gMmQ',
-  authDomain: 'retailrise-ef9d2.firebaseapp.com',
-  projectId: 'retailrise-ef9d2',
-  storageBucket: 'retailrise-ef9d2.appspot.com',
-  messagingSenderId: '615302446876',
-  appId: '1:615302446876:web:e18d16216c4c04ca3b44d9',
-  measurementId: 'G-4HRX03FK3B',
+  apiKey: 'AIzaSyBw7SGFtrn_6u9zRyimpDhxbjHcD5jhHpY',
+  authDomain: 'retailrise-b9e08.firebaseapp.com',
+  databaseURL: 'https://retailrise-b9e08-default-rtdb.firebaseio.com',
+  projectId: 'retailrise-b9e08',
+  storageBucket: 'retailrise-b9e08.appspot.com',
+  messagingSenderId: '890778308354',
+  appId: '1:890778308354:web:cdf45fab5f5f1b458ffc1b',
+  measurementId: 'G-P6398X0XKJ',
 }
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
-const db = getFirestore(app)
+// const db = getFirestore(app)
 const auth = getAuth(app)
+const database = getDatabase(app)
 
-export { auth, db }
+export { auth, app, database }

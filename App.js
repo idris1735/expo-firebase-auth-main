@@ -27,6 +27,12 @@ import { Provider } from 'react-redux'
 import store from './store/store'
 import Checkout from './screens/Checkout'
 // import 'expo-firestore-offline-persistence'
+import UserRoleScreen from './screens/userRoleScreen'
+
+//      ADMIN ==================
+import AdminLogin from './ADMIN/authenticaton/adminLogin'
+import AdminSignup from './ADMIN/authenticaton/adminSignup'
+import AdminWelcomeScreen from './ADMIN/screens/adminWelcomeScreen'
 
 const Stack = createStackNavigator()
 
@@ -42,10 +48,18 @@ const App = () => {
             headerShown: false,
           }}
         >
+          <Stack.Screen name='UserRoleScreen' component={UserRoleScreen} />
+
+          <Stack.Screen
+            name='AdminWelcomeScreen'
+            component={AdminWelcomeScreen}
+          />
+
+          <Stack.Screen name='AdminLogin' component={AdminLogin} />
+          <Stack.Screen name='AdminSignup' component={AdminSignup} />
           <Stack.Screen name='Welcome' component={WelcomeScreen} />
           <Stack.Screen name='SignUp' component={SignUp} />
           <Stack.Screen name='Login' component={Login} />
-
           <Stack.Screen name='Splash' component={Splash} />
           <Stack.Screen name='Homescreen' component={TabNavigator} />
           <Stack.Screen name='Buypizza' component={Buypizza} />

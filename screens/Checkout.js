@@ -13,20 +13,17 @@ import { Ionicons } from '@expo/vector-icons'
 import { FontAwesome5 } from '@expo/vector-icons'
 import { useDispatch, useSelector } from 'react-redux'
 import { selectTableNumber } from '../store/tableNumberSlice'
-import { setBalance, updateBalance } from '../store/balanceReducer'
-import { setOrderData } from '../store/orderReducer' // Import the action
+
 import { MaterialIcons } from '@expo/vector-icons'
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  addDoc,
-} from 'firebase/firestore'
+import { ref, push, update, set } from 'firebase/database'
+
 import { getAuth } from 'firebase/auth'
 import { generateUniqueId } from '../store/generateUniqueId'
 import { clearCart } from '../store/cartReducer'
+import { selectSalesData } from '../store/salesDataReducer'
+import { setSalesData } from '../store/salesDataReducer'
+import { database, app, auth } from '../config/firebase'
+import { ActivityIndicator } from 'react-native'
 
 const Checkout = ({ navigation }) => {
   const tableNumber = useSelector(selectTableNumber)
@@ -34,14 +31,10 @@ const Checkout = ({ navigation }) => {
   const cartItems = useSelector((state) => state.cart.cart)
   const dispatch = useDispatch()
   const auth = getAuth()
-  const currentBalance = useSelector((state) => state.balance.balance)
+  const salesData = useSelector(selectSalesData)
+  const [isLoading, setIsLoading] = useState(false)
 
-  const uniqueId = generateUniqueId() // Generate a unique ID
-
-  const currentTime = new Date()
-  const currentHour = currentTime.getHours()
-  const currentMinute = currentTime.getMinutes()
-
+  // Calculate subtotal, tax, and total
   const subtotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0
@@ -49,42 +42,66 @@ const Checkout = ({ navigation }) => {
   const tax = (subtotal * 2) / 100
   const total = subtotal + tax
 
-  const newBalance = (currentBalance - total).toFixed(2)
-
   const handlePaymentMethodSelection = (method) => {
-    if (selectedMethod === method) {
-      setSelectedMethod(null)
-    } else {
-      setSelectedMethod(method)
-    }
+    setSelectedMethod(method)
   }
 
-  const handleOrderPress = () => {
+  const handleOrderPress = async () => {
     if (!selectedMethod) {
       Alert.alert('Choose a payment option')
       return
     }
 
-    const newOrderData = {
-      id: uniqueId,
-      cartItems: cartItems,
-      time: `${currentHour}:${currentMinute}`,
-      paymentMethod: selectedMethod,
-      total: total.toFixed(2),
-      status: 'processing',
-      tableNumber: tableNumber,
-    }
+    setIsLoading(true) // Start loading indicator
 
-    // Dispatch the setOrderData action to update the order data in Redux
-    dispatch(setOrderData(newOrderData))
-    if (selectedMethod === 'Wallet') {
-      // Deduct the balance only when "Wallet" is selected
-      dispatch(updateBalance(parseFloat(newBalance)))
-    }
-    dispatch(clearCart())
+    const currentTime = new Date()
+    const currentHour = currentTime.getHours()
+    const currentMinute = currentTime.getMinutes()
 
-    // Navigate to the Orderpage
-    navigation.navigate('Orders')
+    const uniqueId = generateUniqueId() // Generate a unique ID for the order
+
+    try {
+      const user = auth.currentUser
+      const uid = user.uid
+
+      // Reference to the user's salesData in the Realtime Database
+      const salesDataRef = ref(database, `users/${uid}/salesData`)
+
+      // Push the new order data as a new child node and get the generated key
+      const newSaleKeyRef = push(salesDataRef)
+      const newSaleKey = newSaleKeyRef.key
+
+      const newOrderData = {
+        orderID: uniqueId,
+        cartItems: cartItems,
+        time: `${currentHour}:${currentMinute}`,
+        paymentMethod: selectedMethod,
+        total: total.toFixed(2),
+        status: 'processing',
+        tableNumber: tableNumber,
+        saleID: newSaleKey,
+      }
+
+      // Set the order data under the salesData/newSaleKey node
+      await set(ref(salesDataRef, newSaleKey), newOrderData)
+
+      const updatedSalesData = { ...salesData, [newSaleKey]: newOrderData }
+      dispatch(setSalesData(updatedSalesData))
+
+      dispatch(clearCart())
+
+      // Navigate to the Order page
+      navigation.navigate('Orders')
+    } catch (error) {
+      console.error('Error creating order:', error)
+      // Handle any errors here
+      Alert.alert(
+        'Order Error',
+        'An error occurred while processing your order. Please try again later.'
+      )
+    } finally {
+      setIsLoading(false) // Stop loading indicator in both success and error cases
+    }
   }
 
   return (
@@ -244,8 +261,13 @@ const Checkout = ({ navigation }) => {
           <TouchableOpacity
             onPress={handleOrderPress}
             style={styles.checkoutButton}
+            disabled={isLoading} // Disable the button while loading
           >
-            <Text style={styles.checkoutButtonText}>ORDER</Text>
+            {isLoading ? (
+              <ActivityIndicator color={colors.light} />
+            ) : (
+              <Text style={styles.checkoutButtonText}>ORDER</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>

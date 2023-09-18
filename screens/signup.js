@@ -7,26 +7,20 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
-import {
-  doc,
-  getFirestore,
-  setDoc,
-  collection,
-  addDoc,
-} from 'firebase/firestore'
-import { auth } from '../config/firebase'
-import { useDispatch, useSelector } from 'react-redux'
-import { setBalance } from '../store/balanceReducer'
+import { ref, set, push } from 'firebase/database'
+import { auth, database } from '../config/firebase'
+import { useDispatch } from 'react-redux'
 import colors from '../assets/colors/colors'
 import Checkbox from 'expo-checkbox'
 import { ActivityIndicator } from 'react-native-paper'
-
-const fireStore = getFirestore() // Initialize Firestore outside of the component
+import { FontAwesome5 } from '@expo/vector-icons'
+import { setSalesData, setUser } from '../store/userReducer'
 
 const SignUp = ({ navigation }) => {
   const dispatch = useDispatch()
 
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
@@ -35,11 +29,14 @@ const SignUp = ({ navigation }) => {
   const [phone, setPhone] = useState('')
   const [termsChecked, setTermsChecked] = useState(false)
 
-  const handleSignUp = async () => {
-    if (firstName && lastName && email && phone && password && termsChecked) {
-      setIsLoading(true)
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword)
+  }
 
-      try {
+  const handleSignUp = async () => {
+    try {
+      if (firstName && lastName && email && phone && password && termsChecked) {
+        setIsLoading(true)
         console.log('Starting signup process...')
 
         // Step 1: Create Firebase Authentication User
@@ -54,28 +51,68 @@ const SignUp = ({ navigation }) => {
         const user = userCredential.user
         const uid = user.uid
 
-        // Step 2: Create User Document in Firestore
-        console.log('Step 2: Creating User Document in Firestore...')
-        const userDocRef = doc(fireStore, 'users', uid)
-        await setDoc(userDocRef, {
+        // Step 2: Create User Data in Realtime Database
+        console.log('Step 2: Creating User Data in Realtime Database...')
+        const userDataRef = ref(database, `users/${uid}/userData`)
+        const docData = {
           firstName,
           lastName,
           email,
-          password,
           phone,
-        })
-        console.log('Step 2: User Document Created in Firestore.')
+          role: 'seller', // Assuming all sign-ups are sellers initially
+        }
 
-        // Done: Navigation
+        await set(userDataRef, docData)
+        console.log('Step 2: User Data Created in Realtime Database.')
+
+        // Step 3: Add a new sale under salesData with a unique key (e.g., sale1, sale2, ...)
+        console.log('Step 3: Adding Sales Data as a subcollection...')
+        const salesDataRef = ref(database, `users/${uid}/salesData`)
+        const newSaleRef = push(salesDataRef) // Generates a unique key for the new sale
+        const newSaleKey = newSaleRef.key
+
+        const salesData = {
+          cartItems: [],
+          time: '',
+          paymentMethod: '',
+          total: 0,
+          status: 'processing',
+          tableNumber: '',
+          saleID: '',
+          orderID: '',
+        }
+
+        const specificSaleRef = ref(
+          database,
+          `users/${uid}/salesData/${newSaleKey}`
+        )
+        await set(specificSaleRef, salesData)
+        console.log('Sales Data added as a subcollection.')
+
+        dispatch(setUser(docData))
+        dispatch(setSalesData(salesData))
+        console.log('Document Data dispatched to redux.')
         console.log('Signup process completed successfully.')
         navigation.navigate('Splash')
-      } catch (error) {
-        const errorCode = error.code
-        const errorMessage = error.message
-        console.error('Error during signup process:', errorMessage)
-      } finally {
-        setIsLoading(false)
+      } else {
+        // Handle missing fields or unchecked terms
+        Alert.alert(
+          'Please fill in all the required fields and accept the terms and conditions.'
+        )
       }
+    } catch (error) {
+      const errorCode = error.code
+      const errorMessage = error.message
+      console.error('Error during signup process:', errorMessage)
+
+      // Handle specific error codes or display a general error message to the user
+      if (errorCode === 'auth/email-already-in-use') {
+        Alert.alert('Email is already in use. Please use a different email.')
+      } else {
+        Alert.alert('Error during signup process. Please try again later.')
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -107,14 +144,34 @@ const SignUp = ({ navigation }) => {
         value={phone}
         onChangeText={(text) => setPhone(text)}
       />
+      <View style={{ width: '80%' }}>
+        <TextInput
+          secureTextEntry={!showPassword}
+          style={{
+            width: '100%',
+            height: 50,
+            borderColor: 'gray',
+            borderWidth: 1,
+            borderRadius: 5,
+            paddingLeft: 10,
+            marginBottom: 10,
+          }}
+          placeholder='Password'
+          value={password}
+          onChangeText={(text) => setPassword(text)}
+        />
+        <TouchableOpacity
+          style={styles.eyeIcon}
+          onPress={togglePasswordVisibility}
+        >
+          <FontAwesome5
+            name={showPassword ? 'eye' : 'eye-slash'}
+            size={20}
+            color={showPassword ? 'black' : 'gray'}
+          />
+        </TouchableOpacity>
+      </View>
 
-      <TextInput
-        secureTextEntry
-        style={styles.input}
-        placeholder='Password'
-        value={password}
-        onChangeText={(text) => setPassword(text)}
-      />
       <View style={styles.checkboxContainer}>
         <Checkbox
           value={termsChecked}
@@ -183,6 +240,11 @@ const styles = StyleSheet.create({
   },
   label: {
     marginLeft: 8,
+  },
+  eyeIcon: {
+    position: 'absolute',
+    top: 12, // Adjust the position as needed
+    right: 10, // Adjust the position as needed
   },
 })
 
